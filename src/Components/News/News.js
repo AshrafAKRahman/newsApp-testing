@@ -26,7 +26,12 @@ const News = () => {
    *
    * Debounces the fetchData function to limit the frequency at which the API is called
    */
+
   useEffect(() => {
+    if (searchTerm === "") {
+      return;
+    }
+
     let debounceTimer;
 
     /**
@@ -54,11 +59,41 @@ const News = () => {
     /**
      * Clean up the debounce timer when the component unmounts
      */
+    //   useEffect(() => {
+    // if (searchTerm === "") {
+    //   return;
+    // }
+    //     let debounceTimer;
+
+    //     /**
+    //      * Async function to fetch data from the GNews API
+    //      */
+    //     const fetchData = async () => {
+    //       try {
+    //         const result = await fetch(
+    //           `https://gnews.io/api/v3/search?q=london&token=${API_KEY}`
+    //         );
+    //         const resultJson = await result.json();
+    //         setArticles(resultJson.data.articles);
+    //       } catch (error) {}
+    //     };
+
+    //     /**
+    //      * Clear the previous debounce timer and set a new one for the fetchData function
+    //      */
+    //     clearTimeout(debounceTimer);
+    //     debounceTimer = setTimeout(() => {
+    //       fetchData();
+    //     }, 1000);
+
+    //     /**
+    //      * Clean up the debounce timer when the component unmounts
+    //      */
     return () => {
       clearTimeout(debounceTimer);
     };
   }, [searchTerm]);
-
+  console.log(articles);
   /**
    * Render the GNews search interface
    */
@@ -74,24 +109,29 @@ const News = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
+
       <div className="articles-container">
-        {articles.map((article) => (
-          <div key={article.title} className="article-box">
-            <img
-              src={article.image}
-              alt={article.title}
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = "https://i.imgur.com/MM76F2o.png";
-              }}
-            />
-            <a href={article.url} target="blank">
-              {article.title}
-            </a>
-          </div>
-        ))}
+        {articles.map((article) => {
+          if (!article) return null;
+          return (
+            <div key={article.title} className="article-box">
+              <img
+                src={article.image}
+                alt={article.title}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "https://i.imgur.com/MM76F2o.png";
+                }}
+              />
+              <a href={article.url} target="blank">
+                {article.title}
+              </a>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 };
+
 export default News;
